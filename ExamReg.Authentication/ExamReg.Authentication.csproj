@@ -19,8 +19,4 @@
     <PackageReference Include="Z.EntityFramework.Extensions.EFCore" Version="2.7.20" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Controllers\register\" />
-  </ItemGroup>
-
 </Project>

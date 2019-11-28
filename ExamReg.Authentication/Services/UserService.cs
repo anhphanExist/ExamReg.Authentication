@@ -23,20 +23,51 @@ namespace ExamReg.Authentication.Services
     {
         public enum ErrorCode
         {
-            GenerateJWTError
+            GenerateJwtError
         }
 
         private AppSettings appSettings;
         private IUOW UOW;
         private IUserValidator UserValidator;
-        public UserService(IUOW UOW, IOptions<AppSettings> options)
+        public UserService(IUOW UOW, IUserValidator UserValidator, IOptions<AppSettings> Options)
         {
             this.UOW = UOW;
-            this.appSettings = options.Value;
+            this.appSettings = Options.Value;
+            this.UserValidator = UserValidator;
         }
-        public Task<User> ChangePassword(User user, string newPassword)
+        public async Task<User> ChangePassword(User user, string newPassword)
         {
-            throw new NotImplementedException();
+            // Xác thực dữ liệu thay đổi password
+            if (!await UserValidator.Update(user, newPassword))
+                return user;
+
+            using (UOW.Begin())
+            {
+                try
+                {
+                    UserFilter filter = new UserFilter
+                    {
+                        Username = user.Username,
+                        Password = user.Password
+                    };
+                    user = await UOW.UserRepository.Get(filter);
+                    user.Password = newPassword;
+
+                    await UOW.UserRepository.Update(user);
+                    await UOW.Commit();
+                    return await UOW.UserRepository.Get(new UserFilter
+                    {
+                        Username = user.Username,
+                        Password = newPassword
+                    });
+                }
+                catch (Exception e)
+                {
+                    await UOW.Rollback();
+                    user.AddError(nameof(UserService), nameof(ChangePassword), Common.ErrorCode.SystemError);
+                    return user;
+                }
+            }
         }
 
         public Task<User> Create(User user)
@@ -46,27 +77,27 @@ namespace ExamReg.Authentication.Services
 
         public async Task<User> Login(User user)
         {
-            // try authenticate user
+            // Xác thực username và password
             if (!await UserValidator.Login(user))
                 return user;
 
+            // Xác thực người dùng thành công, lấy thông tin người dùng ra và tạo jwt token
             UserFilter userFilter = new UserFilter
             {
                 Username = user.Username,
                 Password = user.Password
             };
-
             user = await UOW.UserRepository.Get(userFilter);
-
-            // authentication successful so generate jwt token
             user = await this.GenerateJWT(user, appSettings.JWTSecret, appSettings.JWTLifeTime);
+
+            // Trả về thông tin người dùng kèm token
             return user;
         }
 
         private async Task<User> GenerateJWT(User user, string jWTSecret, int jWTLifeTime)
         {
             if (string.IsNullOrEmpty(jWTSecret) || jWTLifeTime <= 0)
-                user.AddError(nameof(UserService), nameof(GenerateJWT), ErrorCode.GenerateJWTError);
+                user.AddError(nameof(UserService), nameof(GenerateJWT), ErrorCode.GenerateJwtError);
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(jWTSecret);
             var tokenDescriptor = new SecurityTokenDescriptor

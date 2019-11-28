@@ -10,4 +10,9 @@ namespace ExamReg.Authentication.Common
         JWTSECRET = 0,
         JWTLIFETIME = 1
     }
+
+    public enum ErrorCode
+    {
+        SystemError
+    }
 }
