@@ -1,4 +1,5 @@
 ﻿using ExamReg.Authentication.Common;
+using ExamReg.Authentication.Repositories.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,26 +16,30 @@ namespace ExamReg.Authentication.Repositories
     }
     public class UOW : IUOW
     {
-        public IUserRepository UserRepository => throw new NotImplementedException();
+        private ExamRegContext examRegContext;
+        public IUserRepository UserRepository { get; }
 
-        public UOW()
+        public UOW(ExamRegContext examRegContext)
         {
-
+            this.examRegContext = examRegContext;
+            UserRepository = new UserRepository(examRegContext);
         }
 
-        public Task Begin()
+        public async Task Begin()
         {
-            throw new NotImplementedException();
+            await examRegContext.Database.BeginTransactionAsync();
         }
 
         public Task Commit()
         {
-            throw new NotImplementedException();
+            examRegContext.Database.CommitTransaction();
+            return Task.CompletedTask;
         }
 
         public Task Rollback()
         {
-            throw new NotImplementedException();
+            examRegContext.Database.RollbackTransaction();
+            return Task.CompletedTask;
         }
     }
 }
