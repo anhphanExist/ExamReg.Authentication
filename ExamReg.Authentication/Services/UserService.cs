@@ -106,7 +106,8 @@ namespace ExamReg.Authentication.Services
                 {
                     new Claim(ClaimTypes.Name, user.Username),
                     new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                    new Claim("IsAdmin", user.IsAdmin.ToString())
+                    new Claim("IsAdmin", user.IsAdmin.ToString()),
+                    new Claim("StudentId", user.StudentId.ToString())
                 }),
                 Expires = DateTime.UtcNow.AddSeconds(jWTLifeTime),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)

@@ -6,6 +6,7 @@ namespace ExamReg.Authentication.Repositories.Models
 {
     public partial class ExamRegContext : DbContext
     {
+        public virtual DbSet<StudentDAO> Student { get; set; }
         public virtual DbSet<UserDAO> User { get; set; }
 
         public ExamRegContext(DbContextOptions<ExamRegContext> options) : base(options)
@@ -25,6 +26,31 @@ namespace ExamReg.Authentication.Repositories.Models
         {
             modelBuilder.HasAnnotation("ProductVersion", "2.2.6-servicing-10079");
 
+            modelBuilder.Entity<StudentDAO>(entity =>
+            {
+                entity.HasIndex(e => new { e.StudentNumber, e.CX })
+                    .HasName("student_un")
+                    .IsUnique();
+
+                entity.Property(e => e.Id).ValueGeneratedNever();
+
+                entity.Property(e => e.Birthday).HasColumnType("date");
+
+                entity.Property(e => e.CX).ValueGeneratedOnAdd();
+
+                entity.Property(e => e.Email)
+                    .IsRequired()
+                    .HasMaxLength(500);
+
+                entity.Property(e => e.GivenName)
+                    .IsRequired()
+                    .HasMaxLength(100);
+
+                entity.Property(e => e.LastName)
+                    .IsRequired()
+                    .HasMaxLength(100);
+            });
+
             modelBuilder.Entity<UserDAO>(entity =>
             {
                 entity.HasIndex(e => e.CX)
@@ -42,6 +68,11 @@ namespace ExamReg.Authentication.Repositories.Models
                 entity.Property(e => e.Username)
                     .IsRequired()
                     .HasMaxLength(500);
+
+                entity.HasOne(d => d.Student)
+                    .WithMany(p => p.Users)
+                    .HasForeignKey(d => d.StudentId)
+                    .HasConstraintName("user_fk");
             });
 
             OnModelCreatingExt(modelBuilder);

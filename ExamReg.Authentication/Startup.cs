@@ -94,15 +94,15 @@ namespace ExamReg.Authentication
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger(c =>
             {
-                c.RouteTemplate = "api/ExamReg/swagger/{documentname}/swagger.json";
+                c.RouteTemplate = "api/ExamReg/Authentication/swagger/{documentname}/swagger.json";
             });
 
             // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
             // specifying the Swagger JSON endpoint.
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/api/ExamReg/swagger/v1/swagger.json", "Application API");
-                c.RoutePrefix = "api/ExamReg/swagger";
+                c.SwaggerEndpoint("/api/ExamReg/Authentication/swagger/v1/swagger.json", "Application API");
+                c.RoutePrefix = "api/ExamReg/Authentication/swagger";
             });
 
             app.UseMvc();
