@@ -25,7 +25,7 @@ namespace ExamReg.Authentication.Repositories
 
         public async Task<int> Count(UserFilter filter)
         {
-            IQueryable<UserDAO> users = examRegContext.User;
+            IQueryable<UserDAO> users = examRegContext.User.AsNoTracking();
             users = DynamicFilter(users, filter);
             return await users.CountAsync();
         }
