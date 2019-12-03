@@ -13,6 +13,7 @@ namespace ExamReg.Authentication.Entities
         public string Password { get; set; }
         public bool IsAdmin { get; set; }
         public Guid? StudentId { get; set; }
+        public int StudentNumber { get; set; }
         public string Jwt { get; set; }
         public DateTime? ExpiredTime { get; set; }
         public string Salt { get; set; }

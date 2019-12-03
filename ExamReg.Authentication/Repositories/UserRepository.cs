@@ -54,7 +54,8 @@ namespace ExamReg.Authentication.Repositories
                 Password = userDAO.Password,
                 Username = userDAO.Username,
                 IsAdmin = userDAO.IsAdmin,
-                StudentId = userDAO.StudentId
+                StudentId = userDAO.StudentId,
+                StudentNumber = !userDAO.IsAdmin ? userDAO.Student.StudentNumber : 0
             };
         }
 
