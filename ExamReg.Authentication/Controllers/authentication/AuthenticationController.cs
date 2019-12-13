@@ -33,15 +33,20 @@ namespace ExamReg.Authentication.Controllers.authentication
             // Nếu Login thành công (không có lỗi) thì gán cookies bằng chuỗi Jwt
             if (res.Errors.Count == 0)
             {
-                Response.Cookies.Append("token", res.Jwt);
+                return new LoginResponseDTO()
+                {
+                    Username = res.Username,
+                    Errors = res.Errors,
+                    Token = res.Jwt
+                };
             }
-
-            // Trả về JSON Object
-            return new LoginResponseDTO()
-            {
-                Username = res.Username,
-                Errors = res.Errors
-            };
+            else
+                return new LoginResponseDTO()
+                {
+                    Username = res.Username,
+                    Errors = res.Errors
+                };
+            
         }
 
         [Route("change-password"), HttpPost]
