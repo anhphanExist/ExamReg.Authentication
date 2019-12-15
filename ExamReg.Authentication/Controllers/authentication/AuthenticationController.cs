@@ -37,7 +37,8 @@ namespace ExamReg.Authentication.Controllers.authentication
                 {
                     Username = res.Username,
                     Errors = res.Errors,
-                    Token = res.Jwt
+                    Token = res.Jwt,
+                    isAdmin = res.IsAdmin
                 };
             }
             else

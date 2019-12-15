@@ -6,5 +6,6 @@ namespace ExamReg.Authentication.Controllers.authentication
     {
         public string Username { get; set; }
         public string Token { get; set; }
+        public bool isAdmin { get; set; }
     }
 }
