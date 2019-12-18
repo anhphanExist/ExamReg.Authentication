@@ -40,6 +40,9 @@ namespace ExamReg.Authentication.Controllers.authentication
             return new LoginResponseDTO()
             {
                 Username = res.Username,
+                ExpiredTime = res.ExpiredTime,
+                IsAdmin = res.IsAdmin,
+                Token = res.Jwt,
                 Errors = res.Errors
             };
         }
